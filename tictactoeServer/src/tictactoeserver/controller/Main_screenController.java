@@ -16,7 +16,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import tictactoeserver.ServerConnection;
 
 /**
  * FXML Controller class
@@ -29,7 +31,7 @@ public class Main_screenController implements Initializable {
     private Button playerStatusBtn;
     @FXML
     private ToggleButton serverActivationBtn;
-
+    private ServerConnection connection;
     /**
      * Initializes the controller class.
      */
@@ -49,11 +51,14 @@ public class Main_screenController implements Initializable {
 
      @FXML
     private void serverActivationHandler(ActionEvent event) {
-        if(serverActivationBtn.isPressed()){
-            
+         ServerConnection connection = ServerConnection.getInstance();
+        if(serverActivationBtn.isSelected()){
+            serverActivationBtn.setStyle("-fx-background-color: green;");
+            connection.openServer();
         }
         else{
-            
+            serverActivationBtn.setStyle("-fx-background-color: red;");
+            connection.closeServer();
         }
     }
     
