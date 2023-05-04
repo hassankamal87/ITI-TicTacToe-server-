@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -46,8 +47,15 @@ public class Main_screenController implements Initializable {
         stage.setScene(scene);
     }
 
-    @FXML
+     @FXML
     private void serverActivationHandler(ActionEvent event) {
+        if(serverActivationBtn.isPressed()){
+            
+        }
+        else{
+            
+        }
     }
     
 }
+
