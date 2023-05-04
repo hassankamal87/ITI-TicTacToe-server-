@@ -7,6 +7,8 @@ package tictactoeserver.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -43,7 +45,11 @@ public class Graph_screenController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList( 
+        new PieChart.Data(onlinePlayersText.getText(), Integer.parseInt(onlineNum.getText())), 
+        new PieChart.Data(offlinePlayersText.getText(), Integer.parseInt(offlineNum.getText())));
+        
+        pieChart.setData(pieChartData);   
     }    
 
     @FXML
