@@ -39,7 +39,7 @@ public class Main_screenController implements Initializable {
 
     @FXML
     private void playerStatusHandler(ActionEvent event) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/tictactoeserver/XML/graph_screen.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/tictactoeserver/XML/players_status.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root,620,420);
         Stage stage = (Stage) playerStatusBtn.getScene().getWindow();

@@ -55,7 +55,7 @@ public class Graph_screenController implements Initializable {
     @FXML
     private void backButton(MouseEvent event) throws Exception{
         
-        Parent mainRoot = FXMLLoader.load(getClass().getResource("/tictactoeserver/XML/main_screen.fxml"));
+        Parent mainRoot = FXMLLoader.load(getClass().getResource("/tictactoeserver/XML/players_status.fxml"));
         Scene mainScene = new Scene(mainRoot, 610, 410);
         Stage primaryStage = (Stage) backBtn.getScene().getWindow();
         primaryStage.setScene(mainScene);
