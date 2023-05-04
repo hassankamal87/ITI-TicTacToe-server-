@@ -48,6 +48,12 @@ public class Main_screenController implements Initializable {
 
     @FXML
     private void serverActivationHandler(ActionEvent event) {
+        if(serverActivationBtn.isPressed()){
+            
+        }
+        else{
+            
+        }
     }
     
 }
