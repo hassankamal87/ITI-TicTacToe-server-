@@ -37,11 +37,10 @@ public class DataAccessLayer {
     
     public int insert(Player player) throws SQLException{
         int result = 0;
-        PreparedStatement statment = connection.prepareStatement("INSERT INTO PLAYERS (PLAYERID,NAME, EMAIL,PASSWORD) VALUES (?,?,?,?)");
-        statment.setInt(1, player.getPlayerId());
-        statment.setString(2, player.getName());
-        statment.setString(3,player.getEmail());
-        statment.setString(4, player.getPassword());
+        PreparedStatement statment = connection.prepareStatement("INSERT INTO PLAYERS (NAME, EMAIL,PASSWORD) VALUES (?,?,?)");
+        statment.setString(1, player.getName());
+        statment.setString(2,player.getEmail());
+        statment.setString(3, player.getPassword());
         
         result = statment.executeUpdate();
         
@@ -50,11 +49,12 @@ public class DataAccessLayer {
     
     public Player getPlayerByID(int id) throws SQLException{
         Player player;
-        PreparedStatement statment = connection.prepareStatement("SELECT * FROM PLAYERS WHERE ID = ?");
+        PreparedStatement statment = connection.prepareStatement("SELECT * FROM PLAYERS WHERE PLAYERID = ?");
         statment.setInt(1, id);
         
         ResultSet rs = statment.executeQuery();
         
+        rs.next();
         int playerId = rs.getInt("PLAYERID");
         String name = rs.getString("NAME");
         String email = rs.getString("EMAIL");
@@ -72,6 +72,7 @@ public class DataAccessLayer {
         
         ResultSet rs = statment.executeQuery();
         
+        rs.next();
         int playerId = rs.getInt("PLAYERID");
         String name = rs.getString("NAME");
         String playerEmail = rs.getString("EMAIL");
@@ -121,7 +122,7 @@ public class DataAccessLayer {
     
     public int changeActiveStatus(Player player) throws SQLException{
         int result = 0;
-        PreparedStatement statment = connection.prepareStatement("UPDATE PLAYERS SET ISACTIVE = ? WHERE id = ?");
+        PreparedStatement statment = connection.prepareStatement("UPDATE PLAYERS SET ISACTIVE = ? WHERE PLAYERID = ?");
         statment.setBoolean(1, !player.isIsActive());
         statment.setInt(2, player.getPlayerId());
         result = statment.executeUpdate();
@@ -131,15 +132,12 @@ public class DataAccessLayer {
     
     public int changePlayStatus(Player player) throws SQLException{
         int result = 0;
-        PreparedStatement statment = connection.prepareStatement("UPDATE PLAYERS SET ISPLAYING = ? WHERE id = ?");
+        PreparedStatement statment = connection.prepareStatement("UPDATE PLAYERS SET ISPLAYING = ? WHERE PLAYERID = ?");
         statment.setBoolean(1, !player.isIsPlaying());
         statment.setInt(2, player.getPlayerId());
         result = statment.executeUpdate();
         
         return result;
     }
-    
-    
-    
     
 }

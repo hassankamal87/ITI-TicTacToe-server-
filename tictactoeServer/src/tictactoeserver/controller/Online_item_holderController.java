@@ -22,13 +22,24 @@ public class Online_item_holderController implements Initializable {
     private Text playerName;
     @FXML
     private Text playerStatus;
+    String name;
+    boolean isActive;
 
+    
+    public Online_item_holderController(String name, boolean isActive){
+        this.name = name;
+        this.isActive = isActive;
+    }
+    
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
+        playerName.setText(name);
+        playerStatus.setText(isActive? "Online" : "Offline");
+    }
+
+    
     
 }

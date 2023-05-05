@@ -53,8 +53,12 @@ public class NetworkAccessLayer implements Runnable {
         try {
             System.out.println("Server Closed");
             
-            serverThread.stop();
-            server.close();
+            
+                
+            if(server != null){
+                server.close();
+                serverThread.stop();
+            }
         } catch (IOException ex) {
             Logger.getLogger(NetworkAccessLayer.class.getName()).log(Level.SEVERE, null, ex);
         }

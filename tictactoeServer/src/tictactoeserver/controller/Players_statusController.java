@@ -25,6 +25,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import tictactoeserver.model.Player;
 import tictactoeserver.services.DataAccessLayer;
 
@@ -41,6 +42,8 @@ public class Players_statusController implements Initializable {
     private ListView<?> listItemHolder;
 
     DataAccessLayer dal;
+    ArrayList<Player> allPlayers;
+    ArrayList<Node> listOfItems;
     Alert alert;
 
     /**
@@ -48,7 +51,12 @@ public class Players_statusController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
+        //for testing database when Player Status clicked
         alert = new Alert(Alert.AlertType.ERROR, "creation error");
+        allPlayers = new ArrayList<>();
+        listOfItems = new ArrayList();
+        
         try {
             dal = DataAccessLayer.getInstance();
         } catch (SQLException ex) {
@@ -56,29 +64,38 @@ public class Players_statusController implements Initializable {
         }
 
         try {
-            int resu;
-            resu = dal.insert(new Player(2,"hassan", "hassan@gmail.com", "123456",false,false));
-            if (resu != 0) {
-                alert.setContentText("insertion done");
-                alert.show();
-            }
+            allPlayers = dal.getAllPlayers();
         } catch (SQLException ex) {
-            System.out.println(ex.toString());
-          //  Logger.getLogger(Players_statusController.class.getName()).log(Level.SEVERE, null, ex);
+            alert.setContentText("error when getting All players from database");
         }
-
+        
         // TODO
-        ArrayList<Node> list = new ArrayList();
-        for (int i = 0; i < 30; i++) {
+        for(Player p : allPlayers){
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/tictactoeserver/XML/online_item_holder.fxml"));
+                loader.setControllerFactory(new Callback<Class<?>, Object>() {
+                    @Override
+                    public Object call(Class<?> clazz) {
+                        if (clazz == Online_item_holderController.class) {
+                            return new Online_item_holderController(p.getName(),p.isIsActive());
+                        } else {
+                            try {
+                                return clazz.newInstance();
+                            } catch (Exception ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        }
+                    }
+                });
+        
+                
                 Node node = loader.load();
-                list.add(node);
+                listOfItems.add(node);
             } catch (IOException ex) {
                 Logger.getLogger(Players_statusController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        ObservableList items = FXCollections.observableArrayList(list);
+        ObservableList items = FXCollections.observableArrayList(listOfItems);
         listItemHolder.setItems(items);
     }
 
