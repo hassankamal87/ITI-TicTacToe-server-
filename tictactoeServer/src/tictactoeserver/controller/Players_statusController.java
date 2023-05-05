@@ -7,6 +7,7 @@ package tictactoeserver.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -19,10 +20,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import tictactoeserver.model.Player;
+import tictactoeserver.services.DataAccessLayer;
 
 /**
  * FXML Controller class
@@ -36,11 +40,33 @@ public class Players_statusController implements Initializable {
     @FXML
     private ListView<?> listItemHolder;
 
+    DataAccessLayer dal;
+    Alert alert;
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        alert = new Alert(Alert.AlertType.ERROR, "creation error");
+        try {
+            dal = DataAccessLayer.getInstance();
+        } catch (SQLException ex) {
+            alert.show();
+        }
+
+        try {
+            int resu;
+            resu = dal.insert(new Player(2,"hassan", "hassan@gmail.com", "123456",false,false));
+            if (resu != 0) {
+                alert.setContentText("insertion done");
+                alert.show();
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.toString());
+          //  Logger.getLogger(Players_statusController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         // TODO
         ArrayList<Node> list = new ArrayList();
         for (int i = 0; i < 30; i++) {
@@ -62,7 +88,7 @@ public class Players_statusController implements Initializable {
         Scene mainScene = new Scene(mainRoot, 610, 410);
         Stage primaryStage = (Stage) backImage.getScene().getWindow();
         primaryStage.setScene(mainScene);
-        
+
     }
 
     @FXML

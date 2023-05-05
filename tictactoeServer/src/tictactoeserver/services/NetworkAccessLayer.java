@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package tictactoeserver;
+package tictactoeserver.services;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -19,20 +19,20 @@ import java.util.logging.Logger;
  *
  * @author Mohamed Adel
  */
-public class ServerConnection implements Runnable {
+public class NetworkAccessLayer implements Runnable {
 
-    private static ServerConnection instance = null;
-    private ServerSocket server;
+    private static NetworkAccessLayer instance = null;
+    public ServerSocket server;
     private Thread serverThread;
     private DataInputStream dis;
     private PrintStream ps;
 
-    private ServerConnection() {
+    private NetworkAccessLayer() {
     }
 
-    public static ServerConnection getInstance() {
+    public static NetworkAccessLayer getInstance() {
         if (instance == null) {
-            instance = new ServerConnection();
+            instance = new NetworkAccessLayer();
         }
         return instance;
     }
@@ -43,7 +43,7 @@ public class ServerConnection implements Runnable {
         try {
             server = new ServerSocket(5005);
         } catch (IOException ex) {
-            Logger.getLogger(ServerConnection.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(NetworkAccessLayer.class.getName()).log(Level.SEVERE, null, ex);
         }
         serverThread = new Thread(this);
         serverThread.start();
@@ -56,7 +56,7 @@ public class ServerConnection implements Runnable {
             serverThread.stop();
             server.close();
         } catch (IOException ex) {
-            Logger.getLogger(ServerConnection.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(NetworkAccessLayer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -71,7 +71,7 @@ public class ServerConnection implements Runnable {
                 ps = new PrintStream(client.getOutputStream());
                 ps.println("Welcome From Server");
             } catch (IOException ex) {
-                Logger.getLogger(ServerConnection.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(NetworkAccessLayer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

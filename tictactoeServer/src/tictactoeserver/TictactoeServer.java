@@ -5,6 +5,7 @@
  */
 package tictactoeserver;
 
+import tictactoeserver.services.NetworkAccessLayer;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -33,7 +34,7 @@ public class TictactoeServer extends Application {
 
     @Override
     public void stop() throws Exception {
-        ServerConnection.getInstance().closeServer();
+        NetworkAccessLayer.getInstance().closeServer();
     }
     /**
      * @param args the command line arguments
