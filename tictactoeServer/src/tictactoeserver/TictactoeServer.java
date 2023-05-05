@@ -31,6 +31,10 @@ public class TictactoeServer extends Application {
         primaryStage.show();
     }
 
+    @Override
+    public void stop() throws Exception {
+        ServerConnection.getInstance().closeServer();
+    }
     /**
      * @param args the command line arguments
      */
