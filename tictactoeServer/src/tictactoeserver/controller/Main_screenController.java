@@ -18,7 +18,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import tictactoeserver.ServerConnection;
+import tictactoeserver.ServerNetwork;
+
 
 /**
  * FXML Controller class
@@ -31,13 +32,19 @@ public class Main_screenController implements Initializable {
     private Button playerStatusBtn;
     @FXML
     private ToggleButton serverActivationBtn;
-    private ServerConnection connection;
+    
+    ServerNetwork server;
+    
+    public Main_screenController(){
+        
+    }
+   
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        
     }    
 
     @FXML
@@ -51,14 +58,16 @@ public class Main_screenController implements Initializable {
 
      @FXML
     private void serverActivationHandler(ActionEvent event) {
-         ServerConnection connection = ServerConnection.getInstance();
+         
         if(serverActivationBtn.isSelected()){
             serverActivationBtn.setStyle("-fx-background-color: green;");
-            connection.openServer();
+                server = new ServerNetwork();
         }
         else{
             serverActivationBtn.setStyle("-fx-background-color: red;");
-            connection.closeServer();
+            
+            server.closeServer();
+            
         }
     }
     
