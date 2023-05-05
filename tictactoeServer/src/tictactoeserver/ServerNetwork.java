@@ -27,7 +27,7 @@ public class ServerNetwork {
     boolean isRunning = true;
 
     public ServerNetwork() {
-
+        
         try {
             serverSocket = new ServerSocket(5005);
             System.out.println("server Connected...");

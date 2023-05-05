@@ -37,5 +37,12 @@ public class TictactoeServer extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop(); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
     
 }

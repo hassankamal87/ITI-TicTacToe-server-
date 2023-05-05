@@ -70,6 +70,12 @@ public class Main_screenController implements Initializable {
             
         }
     }
+
+    @Override
+    protected void finalize() {
+        server.closeServer();
+    }
+    
     
 }
 
