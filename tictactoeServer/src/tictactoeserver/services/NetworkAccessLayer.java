@@ -37,10 +37,12 @@ public class NetworkAccessLayer implements Runnable {
         return instance;
     }
 
-    
+    public boolean isRunning(){
+        return server != null; 
+    }
 
     public void openServer() {
-        try {
+        try {          
             server = new ServerSocket(5005);
         } catch (IOException ex) {
             Logger.getLogger(NetworkAccessLayer.class.getName()).log(Level.SEVERE, null, ex);
