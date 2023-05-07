@@ -31,13 +31,22 @@ public class Main_screenController implements Initializable {
     private Button playerStatusBtn;
     @FXML
     private ToggleButton serverActivationBtn;
-    private NetworkAccessLayer connection;
+    private NetworkAccessLayer connection = NetworkAccessLayer.getInstance();
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        if (connection.isRunning()) {
+            serverActivationBtn.setText("Close Server");
+            serverActivationBtn.setStyle("-fx-background-color: green");
+            serverActivationBtn.setSelected(true);
+        } else {
+            serverActivationBtn.setText("Open Server");
+            serverActivationBtn.setStyle("-fx-background-color: red");
+            serverActivationBtn.setSelected(false);
+        }
     }    
 
     @FXML
@@ -51,13 +60,14 @@ public class Main_screenController implements Initializable {
 
      @FXML
     private void serverActivationHandler(ActionEvent event) {
-         NetworkAccessLayer connection = NetworkAccessLayer.getInstance();
         if(serverActivationBtn.isSelected()){
             serverActivationBtn.setStyle("-fx-background-color: green;");
+            serverActivationBtn.setText("Close Server");
             connection.openServer();
         }
         else{
             serverActivationBtn.setStyle("-fx-background-color: red;");
+            serverActivationBtn.setText("Open Server");
             connection.closeServer();
         }
     }
