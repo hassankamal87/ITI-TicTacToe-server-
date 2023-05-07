@@ -78,7 +78,6 @@ public class NetworkAccessLayer implements Runnable {
                 System.out.println(client.getLocalAddress().toString());
                 dis = new DataInputStream(client.getInputStream());
                 ps = new PrintStream(client.getOutputStream());
-                new ClientHandler(client);
                 ps.println("Welcome From Server");
                 BufferedReader br = new BufferedReader(new InputStreamReader(dis));
                 System.out.println(br);

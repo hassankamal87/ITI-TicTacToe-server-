@@ -31,7 +31,7 @@ public class Main_screenController implements Initializable {
     private Button playerStatusBtn;
     @FXML
     private ToggleButton serverActivationBtn;
-    private NetworkAccessLayer connection = NetworkAccessLayer.getInstance();;
+    private NetworkAccessLayer connection = NetworkAccessLayer.getInstance();
     /**
      * Initializes the controller class.
      */
