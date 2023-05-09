@@ -8,6 +8,7 @@ package tictactoeserver.services;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,25 +37,33 @@ public class NetworkAccessLayer implements Runnable {
     }
 
     public void openServer() {
+        try{
+        server = new ServerSocket(5005);
         try {
-            server = new ServerSocket(5005);
-        } catch (IOException ex) {
-            Logger.getLogger(NetworkAccessLayer.class.getName()).log(Level.SEVERE, null, ex);
+            DataAccessLayer.getInstance().startConnection();
+        } catch (SQLException ex) {
+            System.out.println("Can't start db connection");
         }
         serverThread = new Thread(this);
         serverThread.start();
+        }catch(IOException ex){
+            System.out.println("Can't open server");
+        }
     }
 
     public void closeServer() {
-        try {
-            System.out.println("Server Closed");
-
-            if (server != null) {
-                serverThread.stop();
-                server.close();
+        if (server != null) {
+            try {
+                DataAccessLayer.getInstance().closeConnection();
+            } catch (SQLException ex) {
+                System.out.println("Can't close db connection");
             }
-        } catch (IOException ex) {
-            Logger.getLogger(NetworkAccessLayer.class.getName()).log(Level.SEVERE, null, ex);
+            serverThread.stop();
+            try{
+            server.close();
+            }catch(IOException ex){
+                System.out.println("Can't close server");
+            }
         }
     }
 

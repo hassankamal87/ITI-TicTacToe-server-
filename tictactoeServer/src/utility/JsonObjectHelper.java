@@ -17,6 +17,9 @@ public class JsonObjectHelper {
     public static final String EMAIL = "email";
     public static final String NAME = "name";
     public static final String PASSWORD = "password";
+    public static final String SIGNUP_STATUS = "status";
+    public static final String SIGNUP_SUCCESS = "success";
+    public static final String SIGNUP_FAIL_DUPLICATE = "duplicate";
     
     
 }

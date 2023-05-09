@@ -31,86 +31,108 @@ class ClientHandler extends Thread {
     PrintStream ps;
     BufferedReader br;
     static Vector<ClientHandler> clientVector = new Vector<ClientHandler>();
+    JSONObject clientJson = new JSONObject();
+    JSONObject responseJson = new JSONObject();
+    DataAccessLayer connection;
 
     public ClientHandler(Socket s) {
         try {
             dis = new DataInputStream(s.getInputStream());
             ps = new PrintStream(s.getOutputStream());
             br = new BufferedReader(new InputStreamReader(dis));
+            connection = DataAccessLayer.getInstance();
             clientVector.add(this);
             start();
         } catch (IOException ex) {
+            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     @Override
     public void run() {
+
         while (true) {
-            JSONObject clientJson = readMessage();
+            try {
+                clientJson = readMessage();
+            } catch (NullPointerException ex) {
+                break;
+            }
+
             String header = (String) clientJson.get(JsonObjectHelper.HEADER);
             switch (header) {
                 case JsonObjectHelper.SIGNUP:
                     //signup server logic
-                    System.out.println(clientJson.toJSONString());
-                     {
-                        try {
-                            boolean isExist;
-                            Player newPlayer = new Player(clientJson.get(JsonObjectHelper.NAME).toString(),
-                                    clientJson.get(JsonObjectHelper.EMAIL).toString(),
-                                    clientJson.get(JsonObjectHelper.PASSWORD).toString()
-                            );
-                            isExist = DataAccessLayer.getInstance().checkPlayerExist(newPlayer.getEmail());
-                            if (!isExist) {
-                                DataAccessLayer.getInstance().insert(newPlayer);
-                            }else{
-                                //send duplicate email using ps
-                                System.out.println("duplicate email");
-                            }
-
-                        } catch (SQLException ex) {
-                            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
+                    signupLogic();
                     break;
-                    
                 case JsonObjectHelper.LOGIN:
-                    //signup server logic
-                    System.out.println(clientJson.toJSONString());
-                     {
-                        try {
-                            boolean isSigned = false;
-                            Player player = DataAccessLayer.getInstance().getPlayerByEmail(clientJson.get(JsonObjectHelper.EMAIL).toString());
-                            if(player != null){
-                                if(player.getPassword() == clientJson.get(JsonObjectHelper.PASSWORD).toString())
-                                    isSigned = true;
-                            }
-                            else{
-                                //send duplicate email using ps
-                                System.out.println("password wrong");
-                            }
-
-                        } catch (SQLException ex) {
-                            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
+                    //login server logic
+                    loginLogic();
                     break;
             }
         }
     }
 
-    JSONObject readMessage() {
+    private JSONObject readMessage() throws NullPointerException {
         JSONObject clientJson = new JSONObject();
         try {
-            if (br != null) {
-                clientJson = (JSONObject) new JSONParser().parse(br.readLine());
-            }
+            clientJson = (JSONObject) new JSONParser().parse(br.readLine());
+
         } catch (IOException ex) {
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         return clientJson;
+    }
+
+    private void signupLogic() {
+        {
+            try {
+                boolean isExist;
+                Player newPlayer = new Player(clientJson.get(JsonObjectHelper.NAME).toString(),
+                        clientJson.get(JsonObjectHelper.EMAIL).toString(),
+                        clientJson.get(JsonObjectHelper.PASSWORD).toString()
+                );
+                isExist = connection.checkPlayerExist(newPlayer.getEmail());
+                if (!isExist) {
+                    int result = connection.insert(newPlayer);
+                    if (result > 0) {
+                        //signedup success
+                        responseJson.put(JsonObjectHelper.SIGNUP_STATUS, JsonObjectHelper.SIGNUP_SUCCESS);
+                    }
+                } else {
+                    //send duplicate email using ps
+                    responseJson.put(JsonObjectHelper.SIGNUP_STATUS, JsonObjectHelper.SIGNUP_FAIL_DUPLICATE);
+                }
+                ps.println(responseJson);
+                System.out.println(responseJson.toJSONString());
+
+            } catch (SQLException ex) {
+            }
+        }
+    }
+
+    private void loginLogic() {
+        System.out.println(clientJson.toJSONString());
+        {
+            try {
+                boolean isSigned = false;
+                Player player = DataAccessLayer.getInstance().getPlayerByEmail(clientJson.get(JsonObjectHelper.EMAIL).toString());
+                if (player != null) {
+                    if (player.getPassword() == clientJson.get(JsonObjectHelper.PASSWORD).toString()) {
+                        isSigned = true;
+                    }
+                } else {
+                    //send duplicate email using ps
+                    System.out.println("password wrong");
+                }
+
+            } catch (SQLException ex) {
+                Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
 }

@@ -11,6 +11,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.derby.jdbc.ClientDriver;
 import tictactoeserver.model.Player;
 
@@ -20,19 +22,25 @@ import tictactoeserver.model.Player;
  */
 public class DataAccessLayer {
 
-    Connection connection;
+    private static Connection connection;
     private static DataAccessLayer instance;
-
-    public DataAccessLayer ()throws SQLException{
-        DriverManager.registerDriver(new ClientDriver());
-        connection = DriverManager.getConnection("jdbc:derby://localhost:1527/GameDatabase", "root", "root");
-    }
 
     public static synchronized DataAccessLayer getInstance() throws SQLException {
         if (instance == null) {
             instance = new DataAccessLayer();
         }
         return instance;
+    }
+
+    public void startConnection() throws SQLException {
+
+        DriverManager.registerDriver(new ClientDriver());
+        connection = DriverManager.getConnection("jdbc:derby://localhost:1527/GameDatabase", "root", "root");
+
+    }
+
+    public void closeConnection() throws SQLException {
+        connection.close();
     }
 
     public int insert(Player player) throws SQLException {
