@@ -59,12 +59,16 @@ class ClientHandler extends Thread {
             } catch (NullPointerException ex) {
                 break;
             }
-            
+
             String header = (String) clientJson.get(JsonObjectHelper.HEADER);
             switch (header) {
                 case JsonObjectHelper.SIGNUP:
                     //signup server logic
                     signupLogic();
+                    break;
+                case JsonObjectHelper.LOGIN:
+                    //login server logic
+                    loginLogic();
                     break;
             }
         }
@@ -74,7 +78,7 @@ class ClientHandler extends Thread {
         JSONObject clientJson = new JSONObject();
         try {
             clientJson = (JSONObject) new JSONParser().parse(br.readLine());
-            
+
         } catch (IOException ex) {
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
@@ -106,6 +110,27 @@ class ClientHandler extends Thread {
                 System.out.println(responseJson.toJSONString());
 
             } catch (SQLException ex) {
+            }
+        }
+    }
+
+    private void loginLogic() {
+        System.out.println(clientJson.toJSONString());
+        {
+            try {
+                boolean isSigned = false;
+                Player player = DataAccessLayer.getInstance().getPlayerByEmail(clientJson.get(JsonObjectHelper.EMAIL).toString());
+                if (player != null) {
+                    if (player.getPassword() == clientJson.get(JsonObjectHelper.PASSWORD).toString()) {
+                        isSigned = true;
+                    }
+                } else {
+                    //send duplicate email using ps
+                    System.out.println("password wrong");
+                }
+
+            } catch (SQLException ex) {
+                Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
