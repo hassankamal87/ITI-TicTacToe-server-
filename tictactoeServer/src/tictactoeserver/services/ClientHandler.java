@@ -70,6 +70,28 @@ class ClientHandler extends Thread {
                     //login server logic
                     loginLogic();
                     break;
+                    
+                case JsonObjectHelper.LOGIN:
+                    //signup server logic
+                    System.out.println(clientJson.toJSONString());
+                     {
+                        try {
+                            boolean isSigned = false;
+                            Player player = DataAccessLayer.getInstance().getPlayerByEmail(clientJson.get(JsonObjectHelper.EMAIL).toString());
+                            if(player != null){
+                                if(player.getPassword() == clientJson.get(JsonObjectHelper.PASSWORD).toString())
+                                    isSigned = true;
+                            }
+                            else{
+                                //send duplicate email using ps
+                                System.out.println("password wrong");
+                            }
+
+                        } catch (SQLException ex) {
+                            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    break;
             }
         }
     }
