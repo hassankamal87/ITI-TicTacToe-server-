@@ -118,18 +118,23 @@ class ClientHandler extends Thread {
         System.out.println(clientJson.toJSONString());
         {
             try {
-                boolean isSigned = false;
+               
+                
                 Player player = DataAccessLayer.getInstance().getPlayerByEmail(clientJson.get(JsonObjectHelper.EMAIL).toString());
                 if (player != null) {
                     if (player.getPassword() == clientJson.get(JsonObjectHelper.PASSWORD).toString()) {
-                        isSigned = true;
+                        DataAccessLayer.getInstance().changeActiveStatus(player);
+                         responseJson.put(JsonObjectHelper.SIGNIN_STATUS, JsonObjectHelper.SIGNIN_SUCCESS);
+                    }else{
+                        responseJson.put(JsonObjectHelper.SIGNIN_STATUS, JsonObjectHelper.SIGNIN_FAIL);
                     }
-                } else {
-                    //send duplicate email using ps
+                }
+                    ps.println(responseJson);
+                    System.out.println(responseJson.toJSONString());
                     System.out.println("password wrong");
                 }
 
-            } catch (SQLException ex) {
+             catch (SQLException ex) {
                 Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
