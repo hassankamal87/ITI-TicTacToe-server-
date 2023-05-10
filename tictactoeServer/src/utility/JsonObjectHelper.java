@@ -20,6 +20,9 @@ public class JsonObjectHelper {
     public static final String SIGNUP_STATUS = "status";
     public static final String SIGNUP_SUCCESS = "success";
     public static final String SIGNUP_FAIL_DUPLICATE = "duplicate";
+    public static final String SIGNIN_STATUS = "status";
+    public static final String SIGNIN_FAIL = "wrongInfo";
+    public static final String SIGNIN_SUCCESS = "success";
     
     
 }
