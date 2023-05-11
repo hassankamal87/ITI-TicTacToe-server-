@@ -26,5 +26,8 @@ public class JsonObjectHelper {
     public static final String SIGNIN_SUCCESS = "success";
     public static final String ONLINE_LIST = "list";
     public static final String END = "end";
+    public static final String SEND_INVITATION = "send";
+    public static final String SENDER = "sender";
+    public static final String RECEIVER = "receiver";
 
 }
