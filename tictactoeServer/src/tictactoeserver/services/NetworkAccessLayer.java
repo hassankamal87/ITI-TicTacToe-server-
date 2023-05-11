@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.Alert;
 
 /**
  *
@@ -19,7 +20,7 @@ import java.util.logging.Logger;
 public class NetworkAccessLayer implements Runnable {
 
     private static NetworkAccessLayer instance = null;
-    public ServerSocket server;
+    public ServerSocket server = null;
     private Thread serverThread;
 
     private NetworkAccessLayer() {
@@ -33,22 +34,29 @@ public class NetworkAccessLayer implements Runnable {
     }
 
     public boolean isRunning() {
-        return server != null;
+        if(server == null){
+            return false;
+        }else{
+            return true;
+        }
     }
 
-    public void openServer() {
-        try{
-        server = new ServerSocket(5005);
-        try {
-            DataAccessLayer.getInstance().startConnection();
-        } catch (SQLException ex) {
-            System.out.println("Can't start db connection");
-        }
-        serverThread = new Thread(this);
-        serverThread.start();
-        }catch(IOException ex){
-            System.out.println("Can't open server");
-        }
+    public boolean openServer() {
+            try {
+                DataAccessLayer.getInstance().startConnection();
+                server = new ServerSocket(5005);
+                serverThread = new Thread(this);
+                serverThread.start();
+                return true;
+            } catch (SQLException ex) {
+                new MyAlert(Alert.AlertType.ERROR,"please connect to database first").show();
+                return false;
+            } catch (IOException ex) {
+                new MyAlert(Alert.AlertType.ERROR,"there is another open server").show();
+                return false;
+            }
+            
+    
     }
 
     public void closeServer() {
@@ -73,10 +81,10 @@ public class NetworkAccessLayer implements Runnable {
             try {
                 System.out.println("Waiting ...");
                 Socket client = server.accept();
-                System.out.println(client.getLocalAddress().toString());
+                System.out.println(client.getRemoteSocketAddress().toString());
                 new ClientHandler(client);
             } catch (IOException ex) {
-                Logger.getLogger(NetworkAccessLayer.class.getName()).log(Level.SEVERE, null, ex);
+                new MyAlert(Alert.AlertType.WARNING, "one client is down");
             }
         }
     }

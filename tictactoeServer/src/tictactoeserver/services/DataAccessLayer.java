@@ -33,7 +33,7 @@ public class DataAccessLayer {
     }
 
     public void startConnection() throws SQLException {
-
+        
         DriverManager.registerDriver(new ClientDriver());
         connection = DriverManager.getConnection("jdbc:derby://localhost:1527/GameDatabase", "root", "root");
 
