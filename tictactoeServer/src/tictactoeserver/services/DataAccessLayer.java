@@ -75,21 +75,21 @@ public class DataAccessLayer {
     }
 
     public Player getPlayerByEmail(String email) throws SQLException {
-        Player player;
+        Player player = null;
         PreparedStatement statment = connection.prepareStatement("SELECT * FROM PLAYERS WHERE EMAIL = ?");
         statment.setString(1, email);
 
         ResultSet rs = statment.executeQuery();
 
-        rs.next();
-        int playerId = rs.getInt("PLAYERID");
-        String name = rs.getString("NAME");
-        String playerEmail = rs.getString("EMAIL");
-        boolean isActive = rs.getBoolean("ISACTIVE");
-        boolean isPlaying = rs.getBoolean("ISPLAYING");
-        String password = rs.getString("PASSWORD");
-        player = new Player(playerId, name, playerEmail, password, isActive, isPlaying);
-
+        if (rs.next()) {
+            int playerId = rs.getInt("PLAYERID");
+            String name = rs.getString("NAME");
+            String playerEmail = rs.getString("EMAIL");
+            boolean isActive = rs.getBoolean("ISACTIVE");
+            boolean isPlaying = rs.getBoolean("ISPLAYING");
+            String password = rs.getString("PASSWORD");
+            player = new Player(playerId, name, playerEmail, password, isActive, isPlaying);
+        }
         return player;
     }
 

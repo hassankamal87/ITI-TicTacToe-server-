@@ -108,27 +108,30 @@ class ClientHandler extends Thread {
                     responseJson.put(JsonObjectHelper.SIGNUP_STATUS, JsonObjectHelper.SIGNUP_FAIL_DUPLICATE);
                 }
                 ps.println(responseJson);
-                
+
             } catch (SQLException ex) {
             }
         }
     }
 
     private void loginLogic() {
-                ArrayList<Player> onlinePlayersList = new ArrayList<>();
-            try {
-               
-                
-                Player player = DataAccessLayer.getInstance().getPlayerByEmail(clientJson.get(JsonObjectHelper.EMAIL).toString());
-                if (player != null) {
-                    if (player.getPassword().toString().equals(clientJson.get(JsonObjectHelper.PASSWORD).toString())) {
-                        DataAccessLayer.getInstance().changeActiveStatus(player);
-                         responseJson.put(JsonObjectHelper.SIGNIN_STATUS, JsonObjectHelper.SIGNIN_SUCCESS);
-                    }else{
-                        responseJson.put(JsonObjectHelper.SIGNIN_STATUS, JsonObjectHelper.SIGNIN_FAIL);
-                    }
+        ArrayList<Player> onlinePlayersList = new ArrayList<>();
+        try {
+
+            Player player = DataAccessLayer.getInstance().getPlayerByEmail(clientJson.get(JsonObjectHelper.EMAIL).toString());
+            if (player != null) {
+                if (player.getPassword().toString().equals(clientJson.get(JsonObjectHelper.PASSWORD).toString())) {
+                    DataAccessLayer.getInstance().changeActiveStatus(player);
+                    responseJson.put(JsonObjectHelper.SIGNIN_STATUS, JsonObjectHelper.SIGNIN_SUCCESS);
+                } else {
+                    responseJson.put(JsonObjectHelper.SIGNIN_STATUS, JsonObjectHelper.SIGNIN_FAIL);
                 }
-                ps.println(responseJson);
+            } else {
+                responseJson.put(JsonObjectHelper.SIGNIN_STATUS, JsonObjectHelper.SIGNIN_FAIL);
+            }
+            ps.println(responseJson);
+
+            if (player != null) {
                 onlinePlayersList = DataAccessLayer.getInstance().getAllPlayers();
                 if (onlinePlayersList.size() > 0) {
                     for (Player p : onlinePlayersList) {
@@ -143,13 +146,12 @@ class ClientHandler extends Thread {
                     }
                     ps.println(new JSONObject().put(JsonObjectHelper.HEADER, JsonObjectHelper.END));
                 }
-                //System.out.println(responseJson.toJSONString());
 
-                }
-
-             catch (SQLException ex) {
-                Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
+            //System.out.println(responseJson.toJSONString());
+
+        } catch (SQLException ex) {
+        }
     }
 
 }
