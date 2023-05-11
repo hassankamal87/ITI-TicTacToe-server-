@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -78,6 +79,7 @@ class ClientHandler extends Thread {
         JSONObject clientJson = new JSONObject();
         try {
             clientJson = (JSONObject) new JSONParser().parse(br.readLine());
+
         } catch (IOException ex) {
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
@@ -113,7 +115,7 @@ class ClientHandler extends Thread {
     }
 
     private void loginLogic() {
-        
+                ArrayList<Player> onlinePlayersList = new ArrayList<>();
             try {
                
                 
@@ -127,6 +129,22 @@ class ClientHandler extends Thread {
                     }
                 }
                 ps.println(responseJson);
+                onlinePlayersList = DataAccessLayer.getInstance().getAllPlayers();
+                if (onlinePlayersList.size() > 0) {
+                    for (Player p : onlinePlayersList) {
+                        if (player.getEmail() != clientJson.get(JsonObjectHelper.EMAIL)) {
+                            JSONObject playerJson = new JSONObject();
+                            playerJson.put(JsonObjectHelper.HEADER, JsonObjectHelper.ONLINE_LIST);
+                            playerJson.put(JsonObjectHelper.EMAIL, player.getEmail());
+                            playerJson.put(JsonObjectHelper.NAME, player.getName());
+                            ps.println(playerJson);
+                        }
+
+                    }
+                    ps.println(new JSONObject().put(JsonObjectHelper.HEADER, JsonObjectHelper.END));
+                }
+                //System.out.println(responseJson.toJSONString());
+
                 }
 
              catch (SQLException ex) {
