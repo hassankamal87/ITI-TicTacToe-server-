@@ -35,7 +35,7 @@ import tictactoeserver.services.DataAccessLayer;
  *
  * @author AB
  */
-public class Graph_screenController implements Initializable  {
+public class Graph_screenController implements Initializable {
 
     @FXML
     private PieChart pieChart;
@@ -49,18 +49,16 @@ public class Graph_screenController implements Initializable  {
     private Text offlinePlayersText;
     @FXML
     private ImageView backBtn;
-    
+
     private Timeline timeLine;
-    
+
     private int onlineNo;
     private int tottalNo;
     private int offlineNo;
-    
 
-    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+
         drawPieChart();
         timeLine = new Timeline(new KeyFrame(Duration.seconds(10), new EventHandler<ActionEvent>() {
             @Override
@@ -70,49 +68,37 @@ public class Graph_screenController implements Initializable  {
         }));
         timeLine.setCycleCount(Timeline.INDEFINITE);
         timeLine.play();
-    }    
+    }
 
     @FXML
-    private void backButton(MouseEvent event) throws Exception{
-        
+    private void backButton(MouseEvent event) throws Exception {
+
         Parent mainRoot = FXMLLoader.load(getClass().getResource("/tictactoeserver/XML/players_status.fxml"));
         Scene mainScene = new Scene(mainRoot, 610, 410);
         Stage primaryStage = (Stage) backBtn.getScene().getWindow();
         primaryStage.setScene(mainScene);
-        
+
     }
 
     private void updateData() {
-        
-        try {
-           tottalNo = DataAccessLayer.getInstance().getAllPlayers().size();
-           onlineNo = DataAccessLayer.getInstance().getOnlinePlayers().size();
-           offlineNo = tottalNo - onlineNo;
-           onlineNum.setText(Integer.toString(onlineNo));
-           offlineNum.setText(Integer.toString(offlineNo));
-        } catch (SQLException ex) {
-            Logger.getLogger(Graph_screenController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList( 
-        new PieChart.Data(onlinePlayersText.getText(), onlineNo), 
-        new PieChart.Data(offlinePlayersText.getText(), offlineNo));
-        pieChart.setData(pieChartData);
-        pieChart.setLabelsVisible(true);
+        drawPieChart();
     }
-    private void drawPieChart(){
+
+    private void drawPieChart() {
         try {
-           tottalNo = DataAccessLayer.getInstance().getAllPlayers().size();
-           onlineNo = DataAccessLayer.getInstance().getOnlinePlayers().size();
-           offlineNo = tottalNo - onlineNo;
-           onlineNum.setText(Integer.toString(onlineNo));
-           offlineNum.setText(Integer.toString(offlineNo));
+            tottalNo = DataAccessLayer.getInstance().getAllPlayers().size();
+            onlineNo = DataAccessLayer.getInstance().getOnlinePlayers().size();
+            offlineNo = tottalNo - onlineNo;
+            onlineNum.setText(Integer.toString(onlineNo));
+            offlineNum.setText(Integer.toString(offlineNo));
         } catch (SQLException ex) {
             Logger.getLogger(Graph_screenController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList( 
-        new PieChart.Data(onlinePlayersText.getText(), onlineNo), 
-        new PieChart.Data(offlinePlayersText.getText(), offlineNo));
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
+                new PieChart.Data(onlinePlayersText.getText(), onlineNo),
+                new PieChart.Data(offlinePlayersText.getText(), offlineNo));
         pieChart.setData(pieChartData);
         pieChart.setLabelsVisible(true);
+        pieChart.setLabelLineLength(10);
     }
 }
