@@ -139,19 +139,24 @@ class ClientHandler extends Thread {
             ps.println(responseJson);
 
             if (player != null) {
-                onlinePlayersList = DataAccessLayer.getInstance().getAllPlayers();
+                onlinePlayersList = DataAccessLayer.getInstance().getOnlinePlayers();
                 if (onlinePlayersList.size() > 0) {
-                    for (Player p : onlinePlayersList) {
-                        if (player.getEmail() != clientJson.get(JsonObjectHelper.EMAIL)) {
-                            JSONObject playerJson = new JSONObject();
-                            playerJson.put(JsonObjectHelper.HEADER, JsonObjectHelper.ONLINE_LIST);
-                            playerJson.put(JsonObjectHelper.EMAIL, player.getEmail());
-                            playerJson.put(JsonObjectHelper.NAME, player.getName());
-                            ps.println(playerJson);
-                        }
+                    for (int i = 0; i < onlinePlayersList.size(); i++) {
+                        //for (Player p : onlinePlayersList) {
+                        JSONObject playerJson = new JSONObject();
+                        playerJson.put(JsonObjectHelper.HEADER, JsonObjectHelper.ONLINE_LIST);
+                        playerJson.put(JsonObjectHelper.EMAIL, onlinePlayersList.get(i).getEmail());
+                        playerJson.put(JsonObjectHelper.NAME, onlinePlayersList.get(i).getName());
+                        System.out.println(playerJson.get(JsonObjectHelper.EMAIL));
+                        ps.println(playerJson);
+
+                        System.out.println(onlinePlayersList.get(i).toString());
 
                     }
-                    ps.println(new JSONObject().put(JsonObjectHelper.HEADER, JsonObjectHelper.END));
+                    JSONObject endJson = new JSONObject();
+                    endJson.put(JsonObjectHelper.HEADER, "end");
+                    ps.println(endJson);
+
                 }
 
             }
