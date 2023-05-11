@@ -68,7 +68,8 @@ public class DataAccessLayer {
         String email = rs.getString("EMAIL");
         boolean isActive = rs.getBoolean("ISACTIVE");
         boolean isPlaying = rs.getBoolean("ISPLAYING");
-        player = new Player(playerId, name, email, name, isActive, isPlaying);
+        String password = rs.getString("PASSWORD");
+        player = new Player(playerId, name, email, password, isActive, isPlaying);
 
         return player;
     }
@@ -86,7 +87,8 @@ public class DataAccessLayer {
         String playerEmail = rs.getString("EMAIL");
         boolean isActive = rs.getBoolean("ISACTIVE");
         boolean isPlaying = rs.getBoolean("ISPLAYING");
-        player = new Player(playerId, name, playerEmail, name, isActive, isPlaying);
+        String password = rs.getString("PASSWORD");
+        player = new Player(playerId, name, playerEmail, password, isActive, isPlaying);
 
         return player;
     }
@@ -134,7 +136,8 @@ public class DataAccessLayer {
             String email = rs.getString("EMAIL");
             boolean isActive = rs.getBoolean("ISACTIVE");
             boolean isPlaying = rs.getBoolean("ISPLAYING");
-            players.add(new Player(playerId, name, email, name, isActive, isPlaying));
+            String password = rs.getString("PASSWORD");
+            players.add(new Player(playerId, name, email, password, isActive, isPlaying));
         }
 
         return players;
@@ -143,7 +146,7 @@ public class DataAccessLayer {
     public int changeActiveStatus(Player player) throws SQLException {
         int result = 0;
         PreparedStatement statment = connection.prepareStatement("UPDATE PLAYERS SET ISACTIVE = ? WHERE PLAYERID = ?");
-        statment.setBoolean(1, !player.isIsActive());
+        statment.setBoolean(1, true);
         statment.setInt(2, player.getPlayerId());
         result = statment.executeUpdate();
 

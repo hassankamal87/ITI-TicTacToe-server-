@@ -17,6 +17,11 @@ public class Player {
     private boolean isActive;
     private boolean isPlaying;
 
+    @Override
+    public String toString() {
+        return "Player{" + "playerId=" + playerId + ", name=" + name + ", email=" + email + ", password=" + password + ", isActive=" + isActive + ", isPlaying=" + isPlaying + '}';
+    }
+
     public Player(String name, String email, String password) {
         this.name = name;
         this.email = email;
@@ -24,6 +29,7 @@ public class Player {
         this.isActive = false;
         this.isPlaying = false;
     }
+    
     
     
     public Player(String name, String email, String password, boolean isActive, boolean isPlaying) {
