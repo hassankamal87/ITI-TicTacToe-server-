@@ -78,7 +78,6 @@ class ClientHandler extends Thread {
         JSONObject clientJson = new JSONObject();
         try {
             clientJson = (JSONObject) new JSONParser().parse(br.readLine());
-
         } catch (IOException ex) {
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
@@ -107,37 +106,32 @@ class ClientHandler extends Thread {
                     responseJson.put(JsonObjectHelper.SIGNUP_STATUS, JsonObjectHelper.SIGNUP_FAIL_DUPLICATE);
                 }
                 ps.println(responseJson);
-                System.out.println(responseJson.toJSONString());
-
+                
             } catch (SQLException ex) {
             }
         }
     }
 
     private void loginLogic() {
-        System.out.println(clientJson.toJSONString());
-        {
+        
             try {
                
                 
                 Player player = DataAccessLayer.getInstance().getPlayerByEmail(clientJson.get(JsonObjectHelper.EMAIL).toString());
                 if (player != null) {
-                    if (player.getPassword() == clientJson.get(JsonObjectHelper.PASSWORD).toString()) {
+                    if (player.getPassword().toString().equals(clientJson.get(JsonObjectHelper.PASSWORD).toString())) {
                         DataAccessLayer.getInstance().changeActiveStatus(player);
                          responseJson.put(JsonObjectHelper.SIGNIN_STATUS, JsonObjectHelper.SIGNIN_SUCCESS);
                     }else{
                         responseJson.put(JsonObjectHelper.SIGNIN_STATUS, JsonObjectHelper.SIGNIN_FAIL);
                     }
                 }
-                    ps.println(responseJson);
-                    System.out.println(responseJson.toJSONString());
-                    System.out.println("password wrong");
+                ps.println(responseJson);
                 }
 
              catch (SQLException ex) {
                 Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
     }
 
 }
