@@ -35,6 +35,8 @@ class ClientHandler extends Thread {
     JSONObject clientJson = new JSONObject();
     JSONObject responseJson = new JSONObject();
     DataAccessLayer connection;
+    String email;
+    String opponentEmail;
 
     public ClientHandler(Socket s) {
         try {
@@ -70,6 +72,10 @@ class ClientHandler extends Thread {
                 case JsonObjectHelper.LOGIN:
                     //login server logic
                     loginLogic();
+                    break;
+                case JsonObjectHelper.SEND_INVITATION:
+                    //send invitaion logic
+                    sendInvitaion();
                     break;
             }
         }
@@ -123,6 +129,7 @@ class ClientHandler extends Thread {
                 if (player.getPassword().toString().equals(clientJson.get(JsonObjectHelper.PASSWORD).toString())) {
                     DataAccessLayer.getInstance().changeActiveStatus(player);
                     responseJson.put(JsonObjectHelper.SIGNIN_STATUS, JsonObjectHelper.SIGNIN_SUCCESS);
+                    email = player.getEmail();
                 } else {
                     responseJson.put(JsonObjectHelper.SIGNIN_STATUS, JsonObjectHelper.SIGNIN_FAIL);
                 }
@@ -156,6 +163,17 @@ class ClientHandler extends Thread {
             //System.out.println(responseJson.toJSONString());
 
         } catch (SQLException ex) {
+        }
+    }
+    
+    private void sendInvitaion(){
+        for(ClientHandler client : clientVector){
+            if(client.email == opponentEmail){
+                JSONObject invitationObject = new JSONObject();
+                invitationObject.put(JsonObjectHelper.SENDER , email);
+                invitationObject.put(JsonObjectHelper.SENDER , email);
+                client.ps.println(invitationObject);
+            }
         }
     }
 
