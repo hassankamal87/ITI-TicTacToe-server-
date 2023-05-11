@@ -6,15 +6,24 @@
  */
 package tictactoeserver.controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogEvent;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -50,20 +59,31 @@ public class Main_screenController implements Initializable {
     }    
 
     @FXML
-    private void playerStatusHandler(ActionEvent event) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/tictactoeserver/XML/players_status.fxml"));
-        Parent root = loader.load();
-        Scene scene = new Scene(root,620,420);
-        Stage stage = (Stage) playerStatusBtn.getScene().getWindow();
-        stage.setScene(scene);
+    private void playerStatusHandler(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/tictactoeserver/XML/players_status.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root,620,420);
+            Stage stage = (Stage) playerStatusBtn.getScene().getWindow();
+            stage.setScene(scene);
+        } catch (IOException ex) {
+            
+            Alert alert = new Alert(Alert.AlertType.ERROR,"please connect to DataBase first", ButtonType.CLOSE);
+            alert.show();
+           
+            
+        }
     }
 
      @FXML
     private void serverActivationHandler(ActionEvent event) {
         if(serverActivationBtn.isSelected()){
-            serverActivationBtn.setStyle("-fx-background-color: green;");
-            serverActivationBtn.setText("Close Server");
-            connection.openServer();
+            if (connection.openServer()){
+                serverActivationBtn.setStyle("-fx-background-color: green;");
+                serverActivationBtn.setText("Close Server");
+            }else{
+                serverActivationBtn.setSelected(false);
+            }
         }
         else{
             serverActivationBtn.setStyle("-fx-background-color: red;");

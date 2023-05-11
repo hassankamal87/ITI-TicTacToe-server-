@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -45,10 +47,15 @@ class ClientHandler extends Thread {
             br = new BufferedReader(new InputStreamReader(dis));
             connection = DataAccessLayer.getInstance();
             clientVector.add(this);
+            System.out.println(clientVector.size() + " constructor");
             start();
         } catch (IOException ex) {
+            //close steams
+            System.out.println("client handler line 50");
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+
+            System.out.println("client handler line 54");
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -60,38 +67,63 @@ class ClientHandler extends Thread {
             try {
                 clientJson = readMessage();
             } catch (NullPointerException ex) {
+                System.out.println("client handler line 66");
                 break;
             }
 
-            String header = (String) clientJson.get(JsonObjectHelper.HEADER);
-            switch (header) {
-                case JsonObjectHelper.SIGNUP:
-                    //signup server logic
-                    signupLogic();
-                    break;
-                case JsonObjectHelper.LOGIN:
-                    //login server logic
-                    loginLogic();
-                    break;
-                case JsonObjectHelper.SEND_INVITATION:
-                    //send invitaion logic
-                    sendInvitaion();
-                    break;
+            if (clientJson != null) {
+                String header = (String) clientJson.get(JsonObjectHelper.HEADER);
+                switch (header) {
+                    case JsonObjectHelper.SIGNUP:
+                        //signup server logic
+                        System.out.println(clientVector.size() + " sign up");
+                        signupLogic();
+                        break;
+                    case JsonObjectHelper.LOGIN:
+                        //login server logic
+                        System.out.println(clientVector.size() + "login");
+                        loginLogic();
+                        break;
+                    case JsonObjectHelper.SEND_INVITATION:
+                        //send invitaion logic
+                        System.out.println(clientVector.size() + "send invitation");
+                        sendInvitaion();
+                        break;
+                }
+            } else{
+                
+                break;
             }
         }
     }
 
-    private JSONObject readMessage() throws NullPointerException {
+    private JSONObject readMessage() {
         JSONObject clientJson = new JSONObject();
         try {
             clientJson = (JSONObject) new JSONParser().parse(br.readLine());
-
+            return clientJson;
         } catch (IOException ex) {
-            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    new MyAlert(Alert.AlertType.WARNING, "one of client get Down").show();
+                }
+            });
+            System.out.println("client handler line 112");
+
         } catch (ParseException ex) {
-            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("client handler line 115");
+
+        } catch (NullPointerException e) {
+            System.out.println("client handler 118");
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    new MyAlert(Alert.AlertType.WARNING, "one of client get Down").show();
+                }
+            });
         }
-        return clientJson;
+        return null;
     }
 
     private void signupLogic() {
@@ -147,11 +179,10 @@ class ClientHandler extends Thread {
                         playerJson.put(JsonObjectHelper.HEADER, JsonObjectHelper.ONLINE_LIST);
                         playerJson.put(JsonObjectHelper.EMAIL, onlinePlayersList.get(i).getEmail());
                         playerJson.put(JsonObjectHelper.NAME, onlinePlayersList.get(i).getName());
-                        System.out.println(playerJson.get(JsonObjectHelper.EMAIL));
+                        //System.out.println(playerJson.get(JsonObjectHelper.EMAIL));
                         ps.println(playerJson);
 
-                        System.out.println(onlinePlayersList.get(i).toString());
-
+                        //System.out.println(onlinePlayersList.get(i).toString());
                     }
                     JSONObject endJson = new JSONObject();
                     endJson.put(JsonObjectHelper.HEADER, "end");
@@ -165,14 +196,17 @@ class ClientHandler extends Thread {
         } catch (SQLException ex) {
         }
     }
-    
-    private void sendInvitaion(){
-        for(ClientHandler client : clientVector){
-            if(client.email == opponentEmail){
+
+    private void sendInvitaion() {
+
+        opponentEmail = responseJson.get("sender").toString();
+        for (ClientHandler client : clientVector) {
+            if (client.email == opponentEmail) {
                 JSONObject invitationObject = new JSONObject();
-                invitationObject.put(JsonObjectHelper.SENDER , email);
-                invitationObject.put(JsonObjectHelper.SENDER , email);
+                invitationObject.put(JsonObjectHelper.SENDER, email);
+                invitationObject.put(JsonObjectHelper.SENDER, email);
                 client.ps.println(invitationObject);
+                System.out.println(client.email);
             }
         }
     }
