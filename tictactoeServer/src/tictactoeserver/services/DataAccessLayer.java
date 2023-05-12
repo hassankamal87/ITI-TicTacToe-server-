@@ -152,6 +152,27 @@ public class DataAccessLayer {
 
         return result;
     }
+    
+    public int login(Player player) throws SQLException {
+        int result = 0;
+        PreparedStatement statment = connection.prepareStatement("UPDATE PLAYERS SET ISACTIVE = ? WHERE PLAYERID = ?");
+        statment.setBoolean(1, true);
+        statment.setInt(2, player.getPlayerId());
+        result = statment.executeUpdate();
+
+        return result;
+    }
+    
+    public int logout(String email) throws SQLException {
+        int result = 0;
+        PreparedStatement statment = connection.prepareStatement("UPDATE PLAYERS SET ISACTIVE = ? WHERE EMAIL = ?");
+        statment.setBoolean(1, false);
+        statment.setString(2, email);
+        result = statment.executeUpdate();
+
+        return result;
+    }
+
 
     public int changePlayStatus(Player player) throws SQLException {
         int result = 0;

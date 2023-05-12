@@ -91,7 +91,8 @@ class ClientHandler extends Thread {
                         break;
                 }
             } else{
-    
+
+
                 break;
             }
         }
@@ -110,6 +111,18 @@ class ClientHandler extends Thread {
             }
 
         } catch (ParseException ex) {
+            System.out.println("client handler line 115");
+
+        } catch (NullPointerException e) {
+            System.out.println("client handler 118");
+            logoutLogic(email);
+            
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    new MyAlert(Alert.AlertType.WARNING, "one of client get Down").show();
+                }
+            });
             System.out.println("client handler line 113");
             try {
                 closeStreams();
@@ -211,6 +224,21 @@ class ClientHandler extends Thread {
         dis.close();
         ps.close();
         br.close();
+    }
+
+    private void logoutLogic(String email) {
+        try {
+            DataAccessLayer.getInstance().logout(email);
+            System.out.println(clientVector.size());
+            for(int i=0 ; i<clientVector.size() ; i++){
+                if (clientVector.get(i).email.equals(email)) {
+                    clientVector.remove(clientVector.get(i));
+                }
+            }
+            System.out.println(clientVector.size());
+        } catch (SQLException ex) {
+            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }
