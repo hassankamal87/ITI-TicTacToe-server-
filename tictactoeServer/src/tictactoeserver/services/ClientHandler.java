@@ -217,8 +217,9 @@ class ClientHandler extends Thread {
     private void sendInvitaion() {
 
         opponentEmail = clientJson.get(JsonObjectHelper.RECEIVER).toString();
-        for (int i = 0; i < clientVector.size(); i++) {
 
+        for(int i=0 ; i<clientVector.size() ; i++){
+        
             if (clientVector.get(i).email.equals(opponentEmail)) {
                 JSONObject invitationObject = new JSONObject();
                 invitationObject.put(JsonObjectHelper.HEADER, JsonObjectHelper.INVITATION);
