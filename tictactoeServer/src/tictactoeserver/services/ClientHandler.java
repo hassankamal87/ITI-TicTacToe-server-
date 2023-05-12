@@ -86,7 +86,7 @@ class ClientHandler extends Thread {
                         break;
                     case JsonObjectHelper.SEND_INVITATION:
                         //send invitaion logic
-                        System.out.println(clientVector.size() + "send invitation");
+                        System.out.println(clientJson.toJSONString());
                         sendInvitaion();
                         break;
                 }
@@ -206,15 +206,16 @@ class ClientHandler extends Thread {
 
     private void sendInvitaion() {
 
-        opponentEmail = clientJson.get(JsonObjectHelper.SENDER).toString();
+        opponentEmail = clientJson.get(JsonObjectHelper.RECEIVER).toString();
         for(int i=0 ; i<clientVector.size() ; i++){
         
-            if (clientVector.get(i).email == opponentEmail) {
+            if (clientVector.get(i).email.equals(opponentEmail)) {
                 JSONObject invitationObject = new JSONObject();
+                invitationObject.put(JsonObjectHelper.HEADER, JsonObjectHelper.INVITATION);
                 invitationObject.put(JsonObjectHelper.SENDER, email);
-                invitationObject.put(JsonObjectHelper.SENDER, email);
+                invitationObject.put(JsonObjectHelper.RECEIVER, opponentEmail);
                 clientVector.get(i).ps.println(invitationObject);
-                System.out.println(clientVector.get(i).email);
+                System.out.println(invitationObject.toJSONString()+"218");
             }
         }
     }
