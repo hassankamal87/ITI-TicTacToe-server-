@@ -120,7 +120,7 @@ class ClientHandler extends Thread {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    new MyAlert(Alert.AlertType.WARNING, "one of client get Down").show();
+                    new MyAlert(Alert.AlertType.WARNING, email + " client get Down").show();
                 }
             });
             System.out.println("client handler line 113");
@@ -206,14 +206,15 @@ class ClientHandler extends Thread {
 
     private void sendInvitaion() {
 
-        opponentEmail = responseJson.get("sender").toString();
-        for (ClientHandler client : clientVector) {
-            if (client.email == opponentEmail) {
+        opponentEmail = clientJson.get(JsonObjectHelper.SENDER).toString();
+        for(int i=0 ; i<clientVector.size() ; i++){
+        
+            if (clientVector.get(i).email == opponentEmail) {
                 JSONObject invitationObject = new JSONObject();
                 invitationObject.put(JsonObjectHelper.SENDER, email);
                 invitationObject.put(JsonObjectHelper.SENDER, email);
-                client.ps.println(invitationObject);
-                System.out.println(client.email);
+                clientVector.get(i).ps.println(invitationObject);
+                System.out.println(clientVector.get(i).email);
             }
         }
     }
