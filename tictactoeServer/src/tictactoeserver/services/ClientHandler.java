@@ -92,6 +92,7 @@ class ClientHandler extends Thread {
                 }
             } else{
 
+
                 break;
             }
         }
@@ -103,20 +104,17 @@ class ClientHandler extends Thread {
             clientJson = (JSONObject) new JSONParser().parse(br.readLine());
             return clientJson;
         } catch (IOException ex) {
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    new MyAlert(Alert.AlertType.WARNING, "one of client get Down").show();
-                }
-            });
-            System.out.println("client handler line 112");
+            try {
+                closeStreams();
+            } catch (IOException ex1) {
+                System.out.println("not closed in 109");
+            }
 
         } catch (ParseException ex) {
             System.out.println("client handler line 115");
 
         } catch (NullPointerException e) {
             System.out.println("client handler 118");
-            System.out.println(email);
             logoutLogic(email);
             
             Platform.runLater(new Runnable() {
@@ -125,6 +123,12 @@ class ClientHandler extends Thread {
                     new MyAlert(Alert.AlertType.WARNING, "one of client get Down").show();
                 }
             });
+            System.out.println("client handler line 113");
+            try {
+                closeStreams();
+            } catch (IOException ex1) {
+                
+            }
         }
         return null;
     }
@@ -212,6 +216,14 @@ class ClientHandler extends Thread {
                 System.out.println(client.email);
             }
         }
+    }
+    
+    private void closeStreams() throws IOException{
+        System.out.println("streams closed done");
+        clientVector.remove(this);
+        dis.close();
+        ps.close();
+        br.close();
     }
 
     private void logoutLogic(String email) {
