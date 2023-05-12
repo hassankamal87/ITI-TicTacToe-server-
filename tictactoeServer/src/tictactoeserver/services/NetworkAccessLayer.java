@@ -85,6 +85,11 @@ public class NetworkAccessLayer implements Runnable {
                 new ClientHandler(client);
             } catch (IOException ex) {
                 new MyAlert(Alert.AlertType.WARNING, "one client is down");
+                try {
+                    server.close();
+                } catch (IOException ex1) {
+                    System.out.println("here");
+                }
             }
         }
     }
