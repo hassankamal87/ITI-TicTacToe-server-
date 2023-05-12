@@ -66,6 +66,7 @@ class ClientHandler extends Thread {
         while (true) {
             try {
                 clientJson = readMessage();
+                System.out.println(clientJson.toJSONString() + " up");
             } catch (NullPointerException ex) {
                 System.out.println("client handler line 66");
                 break;
@@ -86,12 +87,21 @@ class ClientHandler extends Thread {
                         break;
                     case JsonObjectHelper.SEND_INVITATION:
                         //send invitaion logic
-                        System.out.println(clientJson.toJSONString());
                         sendInvitaion();
                         break;
-                }
-            } else{
 
+                    case JsonObjectHelper.ACCEPTANCE:
+                        //send invitaion logic
+                        System.out.println(clientJson.toJSONString()+" ACCEPTANCE");
+                        sendAccept();
+                        break;
+                    case JsonObjectHelper.REFUSE:
+                        //send invitaion logic
+                        System.out.println(clientJson.toJSONString() + "REFUSE");
+                        sendRefuse();
+                        break;
+                }
+            } else {
 
                 break;
             }
@@ -116,7 +126,7 @@ class ClientHandler extends Thread {
         } catch (NullPointerException e) {
             System.out.println("client handler 118");
             logoutLogic(email);
-            
+
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -127,7 +137,7 @@ class ClientHandler extends Thread {
             try {
                 closeStreams();
             } catch (IOException ex1) {
-                
+
             }
         }
         return null;
@@ -207,6 +217,7 @@ class ClientHandler extends Thread {
     private void sendInvitaion() {
 
         opponentEmail = clientJson.get(JsonObjectHelper.RECEIVER).toString();
+
         for(int i=0 ; i<clientVector.size() ; i++){
         
             if (clientVector.get(i).email.equals(opponentEmail)) {
@@ -215,12 +226,11 @@ class ClientHandler extends Thread {
                 invitationObject.put(JsonObjectHelper.SENDER, email);
                 invitationObject.put(JsonObjectHelper.RECEIVER, opponentEmail);
                 clientVector.get(i).ps.println(invitationObject);
-                System.out.println(invitationObject.toJSONString()+"218");
             }
         }
     }
-    
-    private void closeStreams() throws IOException{
+
+    private void closeStreams() throws IOException {
         System.out.println("streams closed done");
         clientVector.remove(this);
         dis.close();
@@ -232,7 +242,7 @@ class ClientHandler extends Thread {
         try {
             DataAccessLayer.getInstance().logout(email);
             System.out.println(clientVector.size());
-            for(int i=0 ; i<clientVector.size() ; i++){
+            for (int i = 0; i < clientVector.size(); i++) {
                 if (clientVector.get(i).email.equals(email)) {
                     clientVector.remove(clientVector.get(i));
                 }
@@ -240,6 +250,36 @@ class ClientHandler extends Thread {
             System.out.println(clientVector.size());
         } catch (SQLException ex) {
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void sendRefuse() {
+
+        opponentEmail = clientJson.get(JsonObjectHelper.EMAIL).toString();
+        for (int i = 0; i < clientVector.size(); i++) {
+
+            if (clientVector.get(i).email.equals(opponentEmail)) {
+                JSONObject refuseObject = new JSONObject();
+                refuseObject.put(JsonObjectHelper.HEADER, JsonObjectHelper.REFUSE);
+                refuseObject.put(JsonObjectHelper.EMAIL, opponentEmail);
+                clientVector.get(i).ps.println(refuseObject);
+                System.out.println(refuseObject.toJSONString() + "266");
+            }
+        }
+    }
+
+    private void sendAccept() {
+
+        opponentEmail = clientJson.get(JsonObjectHelper.EMAIL).toString();
+        for (int i = 0; i < clientVector.size(); i++) {
+
+            if (clientVector.get(i).email.equals(opponentEmail)) {
+                JSONObject acceptanceObject = new JSONObject();
+                acceptanceObject.put(JsonObjectHelper.HEADER, JsonObjectHelper.ACCEPTANCE);
+                acceptanceObject.put(JsonObjectHelper.EMAIL, opponentEmail);
+                clientVector.get(i).ps.println(acceptanceObject);
+                System.out.println(acceptanceObject.toJSONString() + "281");
+            }
         }
     }
 
