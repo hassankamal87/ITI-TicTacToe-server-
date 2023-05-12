@@ -91,7 +91,7 @@ class ClientHandler extends Thread {
                         break;
                 }
             } else{
-                
+
                 break;
             }
         }
@@ -116,6 +116,9 @@ class ClientHandler extends Thread {
 
         } catch (NullPointerException e) {
             System.out.println("client handler 118");
+            System.out.println(email);
+            logoutLogic(email);
+            
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -208,6 +211,21 @@ class ClientHandler extends Thread {
                 client.ps.println(invitationObject);
                 System.out.println(client.email);
             }
+        }
+    }
+
+    private void logoutLogic(String email) {
+        try {
+            DataAccessLayer.getInstance().logout(email);
+            System.out.println(clientVector.size());
+            for(int i=0 ; i<clientVector.size() ; i++){
+                if (clientVector.get(i).email.equals(email)) {
+                    clientVector.remove(clientVector.get(i));
+                }
+            }
+            System.out.println(clientVector.size());
+        } catch (SQLException ex) {
+            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
