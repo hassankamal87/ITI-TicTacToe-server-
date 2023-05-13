@@ -126,7 +126,7 @@ class ClientHandler extends Thread {
 
         } catch (NullPointerException e) {
             System.out.println("client handler 118");
-            logoutLogic(email);
+            //logoutLogic(email);
 
             Platform.runLater(new Runnable() {
                 @Override
