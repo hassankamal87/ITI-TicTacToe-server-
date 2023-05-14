@@ -66,7 +66,6 @@ class ClientHandler extends Thread {
         while (true) {
             try {
                 clientJson = readMessage();
-                System.out.println(clientJson.toJSONString() + " up");
             } catch (NullPointerException ex) {
                 System.out.println("client handler line 66");
                 break;
@@ -93,13 +92,15 @@ class ClientHandler extends Thread {
 
                     case JsonObjectHelper.ACCEPTANCE:
                         //send invitaion logic
-                        System.out.println(clientJson.toJSONString()+" ACCEPTANCE");
                         sendAccept();
                         break;
                     case JsonObjectHelper.REFUSE:
                         //send invitaion logic
-                        System.out.println(clientJson.toJSONString() + "REFUSE");
                         sendRefuse();
+                        break;
+                    case "move":
+                        System.out.println(clientJson.toJSONString() + " weeeeeeeeeeeeeeeeee");
+                        sendMove();
                         break;
                 }
             } else {
@@ -126,7 +127,7 @@ class ClientHandler extends Thread {
 
         } catch (NullPointerException e) {
             System.out.println("client handler 118");
-            logoutLogic(email);
+            //logoutLogic(email);
 
             Platform.runLater(new Runnable() {
                 @Override
@@ -264,6 +265,7 @@ class ClientHandler extends Thread {
                 JSONObject refuseObject = new JSONObject();
                 refuseObject.put(JsonObjectHelper.HEADER, JsonObjectHelper.REFUSE);
                 refuseObject.put(JsonObjectHelper.EMAIL, opponentEmail);
+                refuseObject.put("myEmail", clientJson.get("myEmail").toString());
                 clientVector.get(i).ps.println(refuseObject);
                 System.out.println(refuseObject.toJSONString() + "266");
             }
@@ -279,8 +281,25 @@ class ClientHandler extends Thread {
                 JSONObject acceptanceObject = new JSONObject();
                 acceptanceObject.put(JsonObjectHelper.HEADER, JsonObjectHelper.ACCEPTANCE);
                 acceptanceObject.put(JsonObjectHelper.EMAIL, opponentEmail);
+                acceptanceObject.put("myEmail", clientJson.get("myEmail").toString());
                 clientVector.get(i).ps.println(acceptanceObject);
                 System.out.println(acceptanceObject.toJSONString() + "281");
+            }
+        }
+    }
+    
+    private void sendMove() {
+
+        opponentEmail = clientJson.get("email").toString();
+        for (int i = 0; i < clientVector.size(); i++) {
+
+            if (clientVector.get(i).email.equals(opponentEmail)) {
+                JSONObject moveObject = new JSONObject();
+                moveObject.put("header", "move");
+                moveObject.put("index", clientJson.get("index"));
+                System.out.println(moveObject.toJSONString() + "this you search");
+                System.out.println(opponentEmail + " the email");
+                clientVector.get(i).ps.println(moveObject);
             }
         }
     }
