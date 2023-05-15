@@ -102,6 +102,9 @@ class ClientHandler extends Thread {
                         System.out.println(clientJson.toJSONString() + " weeeeeeeeeeeeeeeeee");
                         sendMove();
                         break;
+                    case "onlineList":
+                        onlineList();
+                        break;
                 }
             } else {
 
@@ -127,7 +130,7 @@ class ClientHandler extends Thread {
 
         } catch (NullPointerException e) {
             System.out.println("client handler 118");
-            //logoutLogic(email);
+            logoutLogic(email);
 
             Platform.runLater(new Runnable() {
                 @Override
@@ -220,8 +223,8 @@ class ClientHandler extends Thread {
 
         opponentEmail = clientJson.get(JsonObjectHelper.RECEIVER).toString();
 
-        for(int i=0 ; i<clientVector.size() ; i++){
-        
+        for (int i = 0; i < clientVector.size(); i++) {
+
             if (clientVector.get(i).email.equals(opponentEmail)) {
                 JSONObject invitationObject = new JSONObject();
                 invitationObject.put(JsonObjectHelper.HEADER, JsonObjectHelper.INVITATION);
@@ -287,7 +290,7 @@ class ClientHandler extends Thread {
             }
         }
     }
-    
+
     private void sendMove() {
 
         opponentEmail = clientJson.get("email").toString();
@@ -301,6 +304,31 @@ class ClientHandler extends Thread {
                 System.out.println(opponentEmail + " the email");
                 clientVector.get(i).ps.println(moveObject);
             }
+        }
+    }
+
+    private void onlineList() {
+
+        try {
+            ArrayList<Player> onlinePlayersList = DataAccessLayer.getInstance().getOnlinePlayers();
+            if (onlinePlayersList.size() > 0) {
+                for (int i = 0; i < onlinePlayersList.size(); i++) {
+                    if (!onlinePlayersList.get(i).getEmail().equals(email)) {
+                        JSONObject playerJson = new JSONObject();
+                        playerJson.put(JsonObjectHelper.HEADER, JsonObjectHelper.ONLINE_LIST);
+                        playerJson.put(JsonObjectHelper.EMAIL, onlinePlayersList.get(i).getEmail());
+                        playerJson.put(JsonObjectHelper.NAME, onlinePlayersList.get(i).getName());
+                        //System.out.println(playerJson.get(JsonObjectHelper.EMAIL));
+                        ps.println(playerJson);
+                    }
+                }
+                JSONObject endJson = new JSONObject();
+                endJson.put(JsonObjectHelper.HEADER, "end");
+                ps.println(endJson);
+
+            }
+        } catch (SQLException ex) {
+            System.out.println("no online players available");
         }
     }
 
